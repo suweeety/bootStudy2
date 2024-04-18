@@ -8,11 +8,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.Commit;
+import org.springframework.transaction.annotation.Transactional;
 import org.zerock.b01.domain.Board;
+import org.zerock.b01.domain.BoardImage;
 import org.zerock.b01.dto.BoardListReplyCountDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -21,6 +25,9 @@ public class BoardRepositoryTests {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    @Autowired // 626 추가
+    private ReplyRepository replyRepository;
 
     @Test
     public void testInsert() {
@@ -194,127 +201,194 @@ public class BoardRepositoryTests {
         //                                                                                                        100번 개시물에 댓글 수 체크
     }
 
-//    @Test
-//    public void testInsertWithImages() {
-//
-//        Board board = Board.builder()
-//                .title("Image Test")
-//                .content("첨부파일 테스트")
-//                .writer("tester")
-//                .build();
-//
-//        for (int i = 0; i < 3; i++) {
-//
-//            board.addImage(UUID.randomUUID().toString(), "file"+i+".jpg");
-//
-//        }//end for
-//
-//        boardRepository.save(board);
-//    }
-//
-//    //    @Test
-////    public void testReadWithImages() {
-////
-////        //반드시 존재하는 bno로 확인
-////        Optional<Board> result = boardRepository.findById(1L);
-////
-////        Board board = result.orElseThrow();
-////
-////        log.info(board);
-////        log.info("--------------------");
-////        log.info(board.getImageSet());
-////    }
-//    @Test
-//    public void testReadWithImages() {
-//
-//        //반드시 존재하는 bno로 확인
-//        Optional<Board> result = boardRepository.findByIdWithImages(1L);
-//
-//        Board board = result.orElseThrow();
-//
-//        log.info(board);
-//        log.info("--------------------");
-//        for (BoardImage boardImage : board.getImageSet()) {
-//            log.info(boardImage);
-//        }
-//    }
-//
-//    @Transactional
-//    @Commit
-//    @Test
-//    public void testModifyImages() {
-//
-//        Optional<Board> result = boardRepository.findByIdWithImages(1L);
-//
-//        Board board = result.orElseThrow();
-//
-//        //기존의 첨부파일들은 삭제
-//        board.clearImages();
-//
-//        //새로운 첨부파일들
-//        for (int i = 0; i < 2; i++) {
-//
-//            board.addImage(UUID.randomUUID().toString(), "updatefile"+i+".jpg");
-//        }
-//
-//        boardRepository.save(board);
-//
-//    }
-//
-//    @Test
-//    @Transactional
-//    @Commit
-//    public void testRemoveAll() {
-//
-//        Long bno = 1L;
-//
-//        replyRepository.deleteByBoard_Bno(bno);
-//
-//        boardRepository.deleteById(bno);
-//
-//    }
-//
-//    @Test
-//    public void testInsertAll() {
-//
-//        for (int i = 1; i <= 100; i++) {
-//
-//            Board board  = Board.builder()
-//                    .title("Title.."+i)
-//                    .content("Content.." + i)
-//                    .writer("writer.." + i)
-//                    .build();
-//
-//            for (int j = 0; j < 3; j++) {
-//
-//                if(i % 5 == 0){
-//                    continue;
-//                }
-//                board.addImage(UUID.randomUUID().toString(),i+"file"+j+".jpg");
-//            }
-//            boardRepository.save(board);
-//
-//        }//end for
-//    }
-//
-//    @Transactional
-//    @Test
-//    public void testSearchImageReplyCount() {
-//
-//        Pageable pageable = PageRequest.of(0,10,Sort.by("bno").descending());
-//
-//        //boardRepository.searchWithAll(null, null,pageable);
-//
-//        Page<BoardListAllDTO> result = boardRepository.searchWithAll(null,null,pageable);
-//
-//        log.info("---------------------------");
-//        log.info(result.getTotalElements());
-//
-//        result.getContent().forEach(boardListAllDTO -> log.info(boardListAllDTO));
-//
-//
-//    }
+    @Test
+    public void testInsertWithImages() { // 619 테스트
 
+        Board board = Board.builder()
+                .title("Image Test")
+                .content("첨부파일 테스트")
+                .writer("tester")
+                .build();
+
+        for (int i = 0; i < 3; i++) {  //3개의 파일 저장
+
+            board.addImage(UUID.randomUUID().toString(), "file"+i+".jpg");
+
+        }//end for
+
+        boardRepository.save(board);
+
+        //Hibernate:
+        //    insert
+        //    into
+        //        board
+        //        (content,moddate,regdate,title,writer)
+        //    values
+        //        (?,?,?,?,?)
+        //Hibernate:
+        //    insert
+        //    into
+        //        board_image
+        //        (board_bno,file_name,ord,uuid)
+        //    values
+        //        (?,?,?,?)
+        //Hibernate:
+        //    insert
+        //    into
+        //        board_image
+        //        (board_bno,file_name,ord,uuid)
+        //    values
+        //        (?,?,?,?)
+        //Hibernate:
+        //    insert
+        //    into
+        //        board_image
+        //        (board_bno,file_name,ord,uuid)
+        //    values
+        //        (?,?,?,?)
+
+    }
+
+    @Transactional
+    @Test
+    public void testReadWithImages() { // 620 테스트
+
+        //반드시 존재하는 bno로 확인
+        Optional<Board> result = boardRepository.findById(1L);
+
+        Board board = result.orElseThrow();
+
+        log.info(board);
+        log.info("--------------------");
+        log.info(board.getImageSet());
+        //org.zerock.b01.domain.Board.imageSet: could not initialize proxy - no Session -> 트렌젝션 추가
+
+        //Hibernate:  @Transactional 추가 후
+        //    select
+        //        b1_0.bno,
+        //        b1_0.content,
+        //        b1_0.moddate,
+        //        b1_0.regdate,
+        //        b1_0.title,
+        //        b1_0.writer
+        //    from
+        //        board b1_0
+        //    where
+        //        b1_0.bno=?
+        //2024-04-15T11:53:56.226+09:00  INFO 1408 --- [    Test worker] o.z.b01.repository.BoardRepositoryTests  : Board(bno=1, title=Image Test, content=첨부파일 테스트, writer=tester)
+        //2024-04-15T11:53:56.228+09:00  INFO 1408 --- [    Test worker] o.z.b01.repository.BoardRepositoryTests  : --------------------
+        //Hibernate:
+        //    select
+        //        i1_0.board_bno,
+        //        i1_0.uuid,
+        //        i1_0.file_name,
+        //        i1_0.ord
+        //    from
+        //        board_image i1_0
+        //    where
+        //        i1_0.board_bno=?
+        //2024-04-15T11:53:56.279+09:00  INFO 1408 --- [    Test worker] o.z.b01.repository.BoardRepositoryTests  : [BoardImage(uuid=d9d61e2f-1fcf-41b3-a1bc-f53c4e9fb604, fileName=file0.jpg, ord=0), BoardImage(uuid=fe7a5a0e-a9d9-4c4e-9c92-8065d248970a, fileName=file2.jpg, ord=2), BoardImage(uuid=1d549a10-ad78-4267-a390-26b38a3ccd1a, fileName=file1.jpg, ord=1)]
+    }
+    @Test
+    public void testReadWithImagesEntityGraph() {
+
+        //반드시 존재하는 bno로 확인
+        Optional<Board> result = boardRepository.findByIdWithImages(1L);
+
+        Board board = result.orElseThrow();
+
+        log.info(board);
+        log.info("--------------------");
+        for (BoardImage boardImage : board.getImageSet()) {
+            log.info(boardImage);
+        }
+
+        //Hibernate:  테스트 결과 조인 처리가 된 상태로 select가 실행 됨.
+        //    select
+        //        b1_0.bno,
+        //        b1_0.content,
+        //        i1_0.board_bno,
+        //        i1_0.uuid,
+        //        i1_0.file_name,
+        //        i1_0.ord,
+        //        b1_0.moddate,
+        //        b1_0.regdate,
+        //        b1_0.title,
+        //        b1_0.writer
+        //    from
+        //        board b1_0
+        //    left join  ------------조인 처리됨.----(@OneToMany구조의 장점)---------------------
+        //        board_image i1_0
+        //            on b1_0.bno=i1_0.board_bno
+        //    where
+        //        b1_0.bno=?
+        //2024-04-15T11:59:54.713+09:00  INFO 9828 --- [    Test worker] o.z.b01.repository.BoardRepositoryTests  : Board(bno=1, title=Image Test, content=첨부파일 테스트, writer=tester)
+        //2024-04-15T11:59:54.725+09:00  INFO 9828 --- [    Test worker] o.z.b01.repository.BoardRepositoryTests  : --------------------
+        //2024-04-15T11:59:54.732+09:00  INFO 9828 --- [    Test worker] o.z.b01.repository.BoardRepositoryTests  : BoardImage(uuid=d9d61e2f-1fcf-41b3-a1bc-f53c4e9fb604, fileName=file0.jpg, ord=0)
+        //2024-04-15T11:59:54.732+09:00  INFO 9828 --- [    Test worker] o.z.b01.repository.BoardRepositoryTests  : BoardImage(uuid=1d549a10-ad78-4267-a390-26b38a3ccd1a, fileName=file1.jpg, ord=1)
+        //2024-04-15T11:59:54.732+09:00  INFO 9828 --- [    Test worker] o.z.b01.repository.BoardRepositoryTests  : BoardImage(uuid=fe7a5a0e-a9d9-4c4e-9c92-8065d248970a, fileName=file2.jpg, ord=2)
+    }
+    //
+    @Transactional
+    @Commit
+    @Test
+    public void testModifyImages() { // 게시물 첨부파일 수정 테스트 : 실제 삭제가 안됨, orphanRemoval = true 추가(고아 객체 삭제용)
+        //부모 엔티티와 연관관계가 끊어진 자식 엔티티를 가리킵니다.
+        //부모가 제거될때, 부모와 연관되어있는 모든 자식 엔티티들은 고아객체가 됩니다.
+        //부모 엔티티와 자식 엔티티 사이의 연관관계를 삭제할때, 해당 자식 엔티티는 고아객체가 됩니다.
+
+        Optional<Board> result = boardRepository.findByIdWithImages(1L);
+
+        Board board = result.orElseThrow();
+
+        //기존의 첨부파일들은 삭제
+        board.clearImages();
+
+        //새로운 첨부파일들
+        for (int i = 0; i < 2; i++) {
+
+            board.addImage(UUID.randomUUID().toString(), "updatefile"+i+".jpg");
+        }
+
+        boardRepository.save(board);
+
+    }
+
+    @Test
+    @Transactional
+    @Commit
+    public void testRemoveAll() {  // 1번 개시물 삭제시 댓글도 삭제 627
+
+        Long bno = 1L;
+
+        replyRepository.deleteByBoard_Bno(bno);
+
+        boardRepository.deleteById(bno);
+
+    }
+    //
+    @Test
+    public void testInsertAll() { // 627 100게시물, 3개의 파일 추가, 5의 배수는 첨부 없음
+
+        for (int i = 1; i <= 100; i++) {
+
+            Board board  = Board.builder()
+                    .title("Title.."+i)
+                    .content("Content.." + i)
+                    .writer("writer.." + i)
+                    .build();
+
+            for (int j = 0; j < 3; j++) {
+
+                if(i % 5 == 0){
+                    continue;
+                }
+                board.addImage(UUID.randomUUID().toString(),i+"file"+j+".jpg");
+            }
+            boardRepository.save(board);
+
+        }//end for
+    }
 
 
 }

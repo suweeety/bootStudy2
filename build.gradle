@@ -65,7 +65,8 @@ dependencies {
     // 오픈소스 사용으로 변경
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 
-
+    // 섬내일 추가 603
+    implementation 'net.coobird:thumbnailator:0.4.16'
 
 }
 

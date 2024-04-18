@@ -15,9 +15,9 @@ public interface BoardSearch {
     Page<BoardListReplyCountDTO> searchWithReplyCount(String[] types,  // 검색조건
                                                       String keyword,   // 검색어
                                                       Pageable pageable); // 페이징
-//
-//    Page<BoardListAllDTO> searchWithAll(String[] types,
-//                                        String keyword,
-//                                        Pageable pageable);
+
+    Page<BoardListReplyCountDTO> searchWithAll(String[] types, // 634 교체 BoardListAllDTO
+                                        String keyword,
+                                        Pageable pageable);  // 628 추가
 
 }
