@@ -197,7 +197,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
     }
 
 
-    //    @Override // 635 하단 변경
+//    @Override // 635 하단 변경
 //    public Page<BoardListReplyCountDTO> searchWithAll(String[] types, String keyword, Pageable pageable) {
 //
 //        QBoard board = QBoard.board;
@@ -278,7 +278,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 //        return null;
 //    } //searchWithAll 종료  (리스트마다 쿼리 한번과 하나의 게시물마다 이미지 쿼리가 실행됨 N+1문제 임 (DB 사용율이 높아짐 -> @BatchSize 로 조절필수
     @Override // 635 변경 BoardListAllDTO
-    public Page<BoardListReplyCountDTO> searchWithAll(String[] types, String keyword, Pageable pageable) {
+    public Page<BoardListAllDTO> searchWithAll(String[] types, String keyword, Pageable pageable) {
 
         QBoard board = QBoard.board;
         QReply reply = QReply.reply;

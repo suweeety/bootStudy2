@@ -14,12 +14,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 //import springfox.documentation.spi.DocumentationType;
 //import springfox.documentation.spring.web.plugins.Docket;
 
-@OpenAPIDefinition( // OpenAPI 정의를 설정하는 데 사용됩니다. 여기서는 title과 version 정보를 제공
+@OpenAPIDefinition(
         info = @Info(title = "Zerock App",version = "v1"))
-@RequiredArgsConstructor //생성자 자동주입
-@Configuration //스프링의 구성 클래스임을 나타냄. 스프링 빈을 설정하는데 사용
+@RequiredArgsConstructor
+@Configuration
 public class SwaggerConfig {  // json 테스트용 코드 필수 -> http://localhost:8080/swagger-ui/index.html
-//Swagger의 GroupedOpenApi 빈을 생성. 이 빈은 특정 API 그룹에 대한 Swagger 정의를 나타냄.
+
     @Bean
     public GroupedOpenApi chatOpenApi() {
         String[] paths = {"/**"};

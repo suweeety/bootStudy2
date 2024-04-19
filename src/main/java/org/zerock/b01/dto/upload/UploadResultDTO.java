@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UploadResultDTO {
-    // 여러개의 파일이 업로드되면 결과도 여러개 발생 하게 되고 여러 정보로 반환해야 함
+public class UploadResultDTO { // 여러개의 파일이 업로드되면 결과도 여러개 발생 하게 되고 여러 정보로 반환해야 함
     // 별도의 dto를 구성하여 객체로 반환 처리 용
 
     private String uuid;
@@ -27,6 +26,4 @@ public class UploadResultDTO {
             return uuid+"_"+fileName;
         }
     }
-
-
 }

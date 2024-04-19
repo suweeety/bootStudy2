@@ -6,13 +6,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
+
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = "board")  // 객체로 사용해야 함.
-public class BoardImage implements Comparable<BoardImage>{
+public class BoardImage implements Comparable<BoardImage> { //Comparable<BoardImage> @OneToMany 처리에서 순번 정렬 처리용)
     // JPA에서 게시글을 중심으로 해석하는지, 첨부파일 중심으로 해석하는지에 따라서 다른 결과가 나옴
     // @ManyToOne을 이용하는 것은 게시물+댓글 관계임 -> 다른 엔티티 객체의 참조로 fk를 가지는 쪽에서 하는 방식
     // @OneToMany는 하나의 게시물은 많은 이미지를 가진다. 로 해석 -> pk를 가진 쪽에서 사용함.

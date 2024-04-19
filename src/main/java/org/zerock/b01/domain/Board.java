@@ -39,22 +39,22 @@ public class Board extends BaseEntity {
 //            fetch = FetchType.LAZY,
 //            orphanRemoval = true)
     @OneToMany(mappedBy = "board", // BoardImage의 board 변수
-            cascade = {CascadeType.ALL}, // 영속성 전이 처리(부모삭제시 자식 제거)
-            //CascadeType.ALL: 모든 Cascade를 적용
-            //CascadeType.PERSIST: 엔티티를 영속화할 때, 연관된 엔티티도 함께 유지
-            //CascadeType.MERGE: 엔티티 상태를 병합(Merge)할 때, 연관된 엔티티도 모두 병합
-            //CascadeType.REMOVE: 엔티티를 제거할 때, 연관된 엔티티도 모두 제거
-            //CascadeType.DETACH: 부모 엔티티를 detach() 수행하면, 연관 엔티티도 detach()상태가 되어 변경 사항 반영 X
-            //CascadeType.REFRESH: 상위 엔티티를 새로고침(Refresh)할 때, 연관된 엔티티도 모두 새로고침
-            fetch = FetchType.LAZY, //지연로딩
-            orphanRemoval = true // 실제 파일 삭제용 추가(고아 객체 삭제)
+                cascade = {CascadeType.ALL}, // 영속성 전이 처리(부모삭제시 자식 제거)
+                        //CascadeType.ALL: 모든 Cascade를 적용
+                        //CascadeType.PERSIST: 엔티티를 영속화할 때, 연관된 엔티티도 함께 유지
+                        //CascadeType.MERGE: 엔티티 상태를 병합(Merge)할 때, 연관된 엔티티도 모두 병합
+                        //CascadeType.REMOVE: 엔티티를 제거할 때, 연관된 엔티티도 모두 제거
+                        //CascadeType.DETACH: 부모 엔티티를 detach() 수행하면, 연관 엔티티도 detach()상태가 되어 변경 사항 반영 X
+                        //CascadeType.REFRESH: 상위 엔티티를 새로고침(Refresh)할 때, 연관된 엔티티도 모두 새로고침
+                fetch = FetchType.LAZY, //지연로딩
+                orphanRemoval = true // 실제 파일 삭제용 추가(고아 객체 삭제)
     )
     //기존  db를 drop 하고 실행하면 테이블 재성됨.
     @Builder.Default
     @BatchSize(size = 20)  // BoardImage를 조회할 때 한번에 20개만 처리 632 추가
     private Set<BoardImage> imageSet = new HashSet<>();  // 연관관계설정
 
-    public void addImage(String uuid, String fileName) {
+    public void addImage(String uuid, String fileName) {  
 
         BoardImage boardImage = BoardImage.builder()
                 .uuid(uuid)

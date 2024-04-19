@@ -8,7 +8,7 @@ buildscript {
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.0'
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'org.zerock'
@@ -49,7 +49,7 @@ dependencies {
             "jakarta.persistence:jakarta.persistence-api",
             "jakarta.annotation:jakarta.annotation-api",
             "com.querydsl:querydsl-apt:${queryDslVersion}:jakarta")
-
+    
     // 모델 처리를 위한 라이브러리 (DTO와 엔티티간의 변환 처리용) -> config.RootConfig에 적용
     implementation 'org.modelmapper:modelmapper:3.1.0'
     // 레이아웃 기능을 위한 라이브러리 xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" html 추가 필수

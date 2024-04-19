@@ -22,10 +22,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+
 @RestController
 @Log4j2
-public class upDownController {
-
+public class UpDownController {
 
     @Value("${org.zerock.upload.path}")// import 시에 springframework으로 시작하는 Value
     private String uploadPath; // application.properties에 경로 등록 필수
@@ -121,13 +121,11 @@ public class upDownController {
         return null;
     }
 
-    //사용자가 요청한 파일을 지정된 경로에서 찾아 해당 파일의 MIME 타입을 설정한 후, 파일을 응답 본문으로 포함하여 반환하는 메서드
+
     @Operation(summary =  "GET방식으로 첨부파일 조회")
     @GetMapping("/view/{fileName}") // 608 추가
     public ResponseEntity<Resource> viewFileGET(@PathVariable String fileName){
 
-        //FileSystemResource 객체를 생성하여 지정된 경로에 있는 파일을 나타냄
-        //uploadPath는 파일이 업로드되는 디렉토리의 경로이고, fileName은 조회할 파일의 이름
         Resource resource = new FileSystemResource(uploadPath+File.separator + fileName);
         String resourceName = resource.getFilename();
         HttpHeaders headers = new HttpHeaders();
